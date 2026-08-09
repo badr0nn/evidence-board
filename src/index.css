@@ -1,0 +1,331 @@
+@import url("https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== FIX BUG SCROLLBAR =====
+   Penyebab paling umum scrollbar muncul: margin default <body> (8px) dan
+   box-sizing yang tidak konsisten membuat total lebar/tinggi elemen melebihi
+   100vw/100vh. Kita paksa reset di sini supaya w-screen/h-screen di App.jsx
+   benar-benar pas tanpa sisa piksel yang memicu scrollbar. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* cadangan kedua: kunci scroll di level browser */
+  background: #0b0f19;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+/* ---------- React Flow canvas tema gelap ---------- */
+.rf-wrapper .react-flow {
+  background: #0b0f19;
+}
+
+.rf-wrapper .react-flow__controls {
+  background: #131826;
+  border: 1px solid #2a3350;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rf-wrapper .react-flow__controls button {
+  background: #131826;
+  border-bottom: 1px solid #2a3350;
+  fill: #cfd6e6;
+}
+
+.rf-wrapper .react-flow__controls button:hover {
+  background: #1c2336;
+}
+
+.rf-wrapper .react-flow__minimap {
+  background: #10141f;
+  border: 1px solid #2a3350;
+  border-radius: 8px;
+}
+
+.rf-wrapper .react-flow__attribution {
+  background: transparent;
+  color: #4a5578;
+}
+
+/* Sembunyikan elemen non-esensial saat proses export PDF */
+.hide-on-export {
+  display: none !important;
+}
+
+/* ================= NODE: SuspectNode (Polaroid) ================= */
+.polaroid-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #f4f1ea;
+  padding: 10px 10px 12px;
+  border-radius: 2px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.15);
+  transform: rotate(-1.2deg);
+  font-family: "Inter", sans-serif;
+}
+
+.polaroid-pin {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff6b6b, #b30d0d 70%);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.6);
+  border: 1px solid #6e0000;
+  z-index: 5;
+}
+
+.polaroid-photo {
+  width: 100%;
+  height: 150px;
+  background: #1a1a1a;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.polaroid-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(15%) contrast(1.05);
+}
+
+.polaroid-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #6b6b6b;
+  font-size: 11px;
+  text-align: center;
+  padding: 10px;
+}
+
+.polaroid-photo-placeholder span:first-child {
+  font-size: 22px;
+}
+
+.polaroid-name-input {
+  display: block;
+  width: 100%;
+  height: auto; /* jangan pernah kunci height pada input teks */
+  margin-top: 10px;
+  border: none;
+  border-bottom: 1px solid #cfc9b8;
+  background: transparent;
+  font-family: "Special Elite", monospace;
+  font-size: 13px;
+  line-height: 1.6; /* line-height normal, jangan < 1.4 agar huruf tak tercekik */
+  color: #1a1a1a;
+  padding: 8px 2px; /* padding vertikal cukup (bug lama: 4px terlalu tipis) */
+  outline: none;
+  text-transform: uppercase;
+}
+
+.polaroid-desc-input {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 8px;
+  border: none;
+  background: transparent;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  color: #333;
+  resize: none;
+  outline: none;
+  line-height: 1.6;
+  padding: 4px 2px;
+}
+
+/* ================= NODE: PhotoNode (Barang Bukti) ================= */
+.evidence-photo-card {
+  position: relative;
+  width: 180px;
+  background: #e9e5d8;
+  padding: 8px;
+  border-radius: 2px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.15);
+  transform: rotate(1deg);
+}
+
+.evidence-tape {
+  position: absolute;
+  width: 46px;
+  height: 16px;
+  background: rgba(232, 220, 160, 0.55);
+  border: 1px solid rgba(180, 165, 100, 0.4);
+  top: -8px;
+  z-index: 5;
+}
+
+.evidence-tape-left {
+  left: -6px;
+  transform: rotate(-35deg);
+}
+
+.evidence-tape-right {
+  right: -6px;
+  transform: rotate(35deg);
+}
+
+.evidence-photo-area {
+  width: 100%;
+  height: 130px;
+  background: #1a1a1a;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.evidence-photo-area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.evidence-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #6b6b6b;
+  font-size: 10px;
+  text-align: center;
+}
+
+.evidence-photo-placeholder span:first-child {
+  font-size: 20px;
+}
+
+.evidence-label-input {
+  width: 100%;
+  margin-top: 8px;
+  border: none;
+  border-bottom: 1px dashed #b8b19c;
+  background: transparent;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  color: #333;
+  padding: 3px 2px;
+  outline: none;
+}
+
+/* ================= NODE: NoteNode (Sticky Note - DARK THEME) ================= */
+.sticky-note-dark {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(155deg, #1e293b 0%, #0f172a 100%); /* slate-800 -> slate-900 */
+  padding: 16px 12px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(100, 116, 139, 0.35); /* border gelap elegan (slate-500/35) */
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transform: rotate(-0.8deg);
+}
+
+.sticky-tape {
+  position: absolute;
+  width: 44px;
+  height: 15px;
+  top: -7px;
+  background: rgba(148, 163, 184, 0.16); /* selotip "kaca buram" agar natural di gelap */
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  backdrop-filter: blur(1px);
+  z-index: 5;
+}
+
+.sticky-tape-left {
+  left: -6px;
+  transform: rotate(-32deg);
+}
+
+.sticky-tape-right {
+  right: -6px;
+  transform: rotate(32deg);
+}
+
+.sticky-note-pin-dark {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f87171, #7f1d1d 70%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  border: 1px solid #450a0a;
+}
+
+.sticky-note-textarea-dark {
+  display: block;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 60px;
+  background: transparent;
+  border: none;
+  resize: none;
+  outline: none;
+  font-family: "Special Elite", monospace;
+  font-size: 12.5px;
+  color: #d6d3d1; /* text-stone-300 */
+  line-height: 1.6;
+}
+
+.sticky-note-textarea-dark::placeholder {
+  color: #64748b; /* slate-500, tetap terbaca tapi tidak mendominasi */
+}
+
+/* ================= Status indikator (header kanan) ================= */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);
+  }
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
