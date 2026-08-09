@@ -1,9 +1,4 @@
-/**
- * Vercel Routing Middleware - HTTP Basic Auth
- *
- * This project is a Vite/React app, so this middleware must use
- * Vercel's standard Request/Response APIs instead of NextResponse.
- */
+import { next } from "@vercel/functions";
 
 const AUTH_USER = process.env.AUTH_USER || "admin";
 const AUTH_PASS = process.env.AUTH_PASS || "Siber2026";
@@ -16,11 +11,14 @@ function isAuthorized(request) {
   }
 
   try {
-    const encoded = authHeader.slice("Basic ".length).trim();
+    const encoded = authHeader.slice(6).trim();
     const decoded = atob(encoded);
 
     const separator = decoded.indexOf(":");
-    if (separator === -1) return false;
+
+    if (separator === -1) {
+      return false;
+    }
 
     const user = decoded.slice(0, separator);
     const pass = decoded.slice(separator + 1);
@@ -32,23 +30,15 @@ function isAuthorized(request) {
 }
 
 export default function middleware(request) {
-  if (isAuthorized(request)) {
-    // Continue to the Vite static site.
-    return fetch(request);
+  if (!isAuthorized(request)) {
+    return new Response("Authentication required.", {
+      status: 401,
+      headers: {
+        "WWW-Authenticate": 'Basic realm="Evidence Board"',
+        "Cache-Control": "no-store",
+      },
+    });
   }
 
-  return new Response("Authentication required.", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Evidence Board"',
-      "Cache-Control": "no-store",
-    },
-  });
+  return next();
 }
-
-// Use Node.js runtime so environment variables and the Vite deployment
-// work consistently without importing Next.js runtime APIs.
-export const config = {
-  runtime: "nodejs",
-  matcher: "/:path*",
-};
